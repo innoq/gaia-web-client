@@ -1,0 +1,26 @@
+{
+  "name": "gaia-manual-mapping",
+  "version": "1.0.0",
+  "description": "WebApp to record the geolocation of farmer's fields.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "parcel index.html",
+    "build": "parcel build --public-url . index.html"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://gitlab.innoq.com/goran/gaia-manual-mapping"
+  },
+  "keywords": [
+    "gaia",
+    "mapping",
+    "gps",
+    "farmer"
+  ],
+  "author": "innoq.com",
+  "license": "ISC",
+  "dependencies": {
+    "ol": "^6.0.1"
+  }
+}
