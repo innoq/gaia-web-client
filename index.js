@@ -1,5 +1,8 @@
 import "ol/ol.css";
+import Feature from "ol/Feature";
+import Geolocation from "ol/Geolocation";
 import Map from "ol/Map";
+import Point from "ol/geom/Point";
 import View from "ol/View";
 import { fromLonLat, toLonLat } from "ol/proj";
 import { Draw, Modify, Snap } from "ol/interaction";
@@ -23,7 +26,27 @@ const raster = new TileLayer({
   })
 });
 
-const source = new VectorSource();
+var positionFeature = new Feature();
+positionFeature.setStyle(
+  new Style({
+    image: new CircleStyle({
+      radius: 6,
+      fill: new Fill({
+        color: "#3399CC"
+      }),
+      stroke: new Stroke({
+        color: "#fff",
+        width: 2
+      })
+    })
+  })
+);
+
+const accuracyFeature = new Feature();
+
+const source = new VectorSource({
+  features: [positionFeature, accuracyFeature]
+});
 
 const vector = new VectorLayer({
   source: source,
@@ -44,13 +67,15 @@ const vector = new VectorLayer({
   })
 });
 
+const view = new View({
+  center: [-11000000, 4600000],
+  zoom: 4
+});
+
 var map = new Map({
   layers: [raster, vector],
   target: "map",
-  view: new View({
-    center: [-11000000, 4600000],
-    zoom: 4
-  })
+  view: view
 });
 
 var modify = new Modify({ source: source });
@@ -66,30 +91,50 @@ map.addInteraction(draw);
 snap = new Snap({ source: source });
 map.addInteraction(snap);
 
-if ("geolocation" in navigator) {
-  navigator.geolocation.getCurrentPosition(position => {
-    currentPosition = fromLonLat([
-      position.coords.longitude,
-      position.coords.latitude
-    ]);
-    map.getView().animate({ center: currentPosition, zoom: 16, duration: 100 });
-    console.log("updated currentPosition: " + currentPosition);
-  });
+var geolocation = new Geolocation({
+  // enableHighAccuracy must be set to true to have the heading value.
+  trackingOptions: {
+    enableHighAccuracy: true
+  },
+  projection: view.getProjection()
+});
 
-  const button = document.querySelector("#addCoord");
+geolocation.setTracking(true);
 
-  button.addEventListener("click", e => {
-    console.log("button clicked");
-    navigator.geolocation.getCurrentPosition(function(position) {
-      console.log("position:", position);
-      const lat = position.coords.latitude;
-      const lon = position.coords.longitude;
-      addNewPolygonPoint(lon, lat);
-      // renderNewPolygonPoint(lon, lat);
-      renderPointList();
-    });
+geolocation.on("change:position", function() {
+  accuracyFeature.setGeometry(geolocation.getAccuracyGeometry());
+  var coordinates = geolocation.getPosition();
+  positionFeature.setGeometry(coordinates ? new Point(coordinates) : null);
+  map.getView().animate({ center: coordinates, zoom: 16, duration: 100 });
+});
+
+// navigator.geolocation.getCurrentPosition(
+//   position => {
+//     currentPosition = fromLonLat([
+//       position.coords.longitude,
+//       position.coords.latitude
+//     ]);
+//     positionFeature.setGeometry(new Point(currentPosition));
+//     map.getView().animate({ center: currentPosition, zoom: 16, duration: 100 });
+//     console.log("updated currentPosition: " + currentPosition);
+//   },
+//   err => null,
+//   { enableHighAccuracy: true }
+// );
+
+const button = document.querySelector("#addCoord");
+
+button.addEventListener("click", e => {
+  console.log("button clicked");
+  geolocation.getCurrentPosition(function(position) {
+    console.log("position:", position);
+    const lat = position.coords.latitude;
+    const lon = position.coords.longitude;
+    addNewPolygonPoint(lon, lat);
+    // renderNewPolygonPoint(lon, lat);
+    renderPointList();
   });
-}
+});
 
 const addNewPolygonPoint = function(lon, lat) {
   const point = [lon, lat];
@@ -124,10 +169,7 @@ source.on("addfeature", vectorSourceEvent => {
     .getGeometry()
     .getCoordinates()[0];
   for (let i = 0; i < polygonPoints.length; i++) {
-    // console.log(
-    //   ">>>>>>>point: " + toLonLat([polygonPoints[i][1], polygonPoints[i][0]])
-    // );
-    const coord = toLonLat([polygonPoints[i][1], polygonPoints[i][0]]);
+    const coord = toLonLat([polygonPoints[i][0], polygonPoints[i][1]]);
     addNewPolygonPoint(coord[0], coord[1]);
   }
 });
