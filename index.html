@@ -1,14 +1,22 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
   <head>
     <meta charset="utf-8" />
     <title>GAIA</title>
+
+    <!-- The line below is only needed for old environments like Internet Explorer and Android 4.x -->
+    <script src="https://cdn.polyfill.io/v2/polyfill.min.js?features=requestAnimationFrame,Element.prototype.classList,URL"></script>
+
     <style>
       #map {
-        height: 300px;
+        height: 400px;
       }
     </style>
-    <link rel="stylesheet" href="node_modules/bootstrap/dist/css/bootstrap.css" />
+
+    <link
+      rel="stylesheet"
+      href="node_modules/bootstrap/dist/css/bootstrap.css"
+    />
   </head>
   <body>
     <div class="container">
@@ -16,7 +24,7 @@
         <a class="navbar-brand" href="#">GAIA - Feld erfassen</a>
       </nav>
 
-      <div id="map" class="row">
+      <div id="map" class="row map">
       </div>
       
       <div class="row">

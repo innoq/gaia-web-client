@@ -1,24 +1,60 @@
 import "ol/ol.css";
-import { Map, View } from "ol";
+import Map from "ol/Map";
+import View from "ol/View";
 import { fromLonLat } from "ol/proj";
-import TileLayer from "ol/layer/Tile";
-import OSM from "ol/source/OSM";
+import { Draw, Modify, Snap } from "ol/interaction";
+import { Tile as TileLayer, Vector as VectorLayer } from "ol/layer";
+import { OSM, Vector as VectorSource } from "ol/source";
+import { Circle as CircleStyle, Fill, Stroke, Style } from "ol/style";
 
 let currentPosition = [0, 0];
 let polygonPoints = [];
 
-const map = new Map({
-  target: "map",
-  layers: [
-    new TileLayer({
-      source: new OSM()
+const raster = new TileLayer({
+  source: new OSM()
+});
+
+const source = new VectorSource();
+const vector = new VectorLayer({
+  source: source,
+  style: new Style({
+    fill: new Fill({
+      color: "rgba(255, 255, 255, 0.2)"
+    }),
+    stroke: new Stroke({
+      color: "#ff0000",
+      width: 2
+    }),
+    image: new CircleStyle({
+      radius: 7,
+      fill: new Fill({
+        color: "#ff0000"
+      })
     })
-  ],
-  view: new View({
-    center: currentPosition,
-    zoom: 5
   })
 });
+
+var map = new Map({
+  layers: [raster, vector],
+  target: "map",
+  view: new View({
+    center: [-11000000, 4600000],
+    zoom: 4
+  })
+});
+
+var modify = new Modify({ source: source });
+map.addInteraction(modify);
+
+var draw, snap; // global so we can remove them later
+
+draw = new Draw({
+  source: source,
+  type: "Polygon"
+});
+map.addInteraction(draw);
+snap = new Snap({ source: source });
+map.addInteraction(snap);
 
 if ("geolocation" in navigator) {
   navigator.geolocation.getCurrentPosition(position => {
@@ -32,7 +68,7 @@ if ("geolocation" in navigator) {
 
   const button = document.querySelector("#addCoord");
 
-  button.addEventListener('click', (e) => {
+  button.addEventListener("click", e => {
     navigator.geolocation.getCurrentPosition(function(position) {
       // console.log("position:", position);
       addNewPolygonPoint(position.coords.latitude, position.coords.longitude);
@@ -40,14 +76,12 @@ if ("geolocation" in navigator) {
   });
 }
 
-
-
 const addNewPolygonPoint = function(lon, lat) {
   const point = [lon, lat];
   polygonPoints.push(point);
-  // for (var pos of polygonPoints) {
-  //   console.log("pos:", pos);
-  // }
-}
-
-console.log(">>>>><currentPosition: " + currentPosition);
+  console.log("_____________");
+  for (var pos of polygonPoints) {
+    console.log("pos:", pos);
+  }
+  console.log("_____________");
+};
