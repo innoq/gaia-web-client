@@ -69,9 +69,14 @@ if ("geolocation" in navigator) {
   const button = document.querySelector("#addCoord");
 
   button.addEventListener("click", e => {
+    console.log("button clicked");
     navigator.geolocation.getCurrentPosition(function(position) {
-      // console.log("position:", position);
-      addNewPolygonPoint(position.coords.latitude, position.coords.longitude);
+      console.log("position:", position);
+      const lat = position.coords.latitude;
+      const lon = position.coords.longitude;
+      addNewPolygonPoint(lon, lat);
+      // renderNewPolygonPoint(lon, lat);
+      renderPointList();
     });
   });
 }
@@ -79,9 +84,29 @@ if ("geolocation" in navigator) {
 const addNewPolygonPoint = function(lon, lat) {
   const point = [lon, lat];
   polygonPoints.push(point);
-  console.log("_____________");
-  for (var pos of polygonPoints) {
-    console.log("pos:", pos);
-  }
-  console.log("_____________");
 };
+
+const renderNewPolygonPoint = function(lon, lat) {
+  // const pointList = document.querySelector(".point-list");
+  // for (var polygonPoint of polygonPoints) {
+  //   const lon = polygonPoint[0];
+  //   const lat = polygonPoint[1];
+  //   var point = new OpenLayers.Feature.Vector(
+  //     new OpenLayers.Geometry.Point(-111.04, 45.68)
+  //   );
+  //   console.log("point:", point);
+  // }
+};
+
+const renderPointList = function () {
+  const pointList = document.querySelector(".point-list");
+  pointList.innerHTML = '';
+  console.log({polygonPoints});
+  for (var polygonPoint of polygonPoints) {
+    const li = document.createElement('li');
+    li.innerHTML = `lon: ${polygonPoint[0]} lat: ${polygonPoint[1]}`;
+    pointList.appendChild(li);
+  }
+
+}
+
