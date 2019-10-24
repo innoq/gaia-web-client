@@ -2,19 +2,34 @@
 <html>
   <head>
     <meta charset="utf-8" />
-    <title>Using Parcel with OpenLayers</title>
+    <title>GAIA</title>
     <style>
       #map {
-        width: 800px;
-        height: 500px;
+        height: 300px;
       }
     </style>
     <link rel="stylesheet" href="node_modules/bootstrap/dist/css/bootstrap.css" />
   </head>
   <body>
-    <div id="map"></div>
     <div class="container">
-      <button id="addCoord" class="btn btn-primary">Add Coordinate</button>
+      <nav class="row navbar navbar-expand-lg navbar-light bg-light">
+        <a class="navbar-brand" href="#">GAIA - Feld erfassen</a>
+      </nav>
+
+      <div id="map" class="row">
+      </div>
+      
+      <div class="row">
+        <button id="addCoord" class="btn btn-primary">Add Point</button>
+      </div>
+      
+      <div class="row">
+        <ul class="point-list">
+          <li>Point 1</li>  
+          <li>Point 2</li>  
+          <li>Point 3</li>  
+        </ul>
+      </div>
     </div>
 
     <script type="module" src="./index.js"></script>
