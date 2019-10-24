@@ -22,5 +22,8 @@
   "license": "ISC",
   "dependencies": {
     "ol": "^6.0.1"
+  },
+  "devDependencies": {
+    "parcel-bundler": "^1.12.4"
   }
 }

@@ -1,7 +1,10 @@
 import "ol/ol.css";
 import { Map, View } from "ol";
+import { fromLonLat } from "ol/proj";
 import TileLayer from "ol/layer/Tile";
 import OSM from "ol/source/OSM";
+
+let currentPosition = [0, 0];
 
 const map = new Map({
   target: "map",
@@ -11,7 +14,20 @@ const map = new Map({
     })
   ],
   view: new View({
-    center: [0, 0],
-    zoom: 0
+    center: currentPosition,
+    zoom: 5
   })
 });
+
+if ("geolocation" in navigator) {
+  navigator.geolocation.getCurrentPosition(position => {
+    currentPosition = fromLonLat([
+      position.coords.longitude,
+      position.coords.latitude
+    ]);
+    map.getView().animate({ center: currentPosition, zoom: 16, duration: 100 });
+    console.log("updated currentPosition: " + currentPosition);
+  });
+}
+
+console.log(">>>>><currentPosition: " + currentPosition);
