@@ -1,7 +1,7 @@
 import "ol/ol.css";
 import Map from "ol/Map";
 import View from "ol/View";
-import { fromLonLat } from "ol/proj";
+import { fromLonLat, toLonLat } from "ol/proj";
 import { Draw, Modify, Snap } from "ol/interaction";
 import { Tile as TileLayer, Vector as VectorLayer } from "ol/layer";
 import { XYZ, Vector as VectorSource } from "ol/source";
@@ -12,15 +12,19 @@ let polygonPoints = [];
 
 const raster = new TileLayer({
   source: new XYZ({
-    attributions: ['Powered by Esri',
-                   'Source: Esri, DigitalGlobe, GeoEye, Earthstar Geographics, CNES/Airbus DS, USDA, USGS, AeroGRID, IGN, and the GIS User Community'],
+    attributions: [
+      "Powered by Esri",
+      "Source: Esri, DigitalGlobe, GeoEye, Earthstar Geographics, CNES/Airbus DS, USDA, USGS, AeroGRID, IGN, and the GIS User Community"
+    ],
     attributionsCollapsible: false,
-    url: 'https://services.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',
+    url:
+      "https://services.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}",
     maxZoom: 23
   })
 });
 
 const source = new VectorSource();
+
 const vector = new VectorLayer({
   source: source,
   style: new Style({
@@ -104,15 +108,26 @@ const renderNewPolygonPoint = function(lon, lat) {
   // }
 };
 
-const renderPointList = function () {
+const renderPointList = function() {
   const pointList = document.querySelector(".point-list");
-  pointList.innerHTML = '';
-  console.log({polygonPoints});
+  pointList.innerHTML = "";
+  console.log({ polygonPoints });
   for (var polygonPoint of polygonPoints) {
-    const li = document.createElement('li');
+    const li = document.createElement("li");
     li.innerHTML = `lon: ${polygonPoint[0]} lat: ${polygonPoint[1]}`;
     pointList.appendChild(li);
   }
+};
 
-}
-
+source.on("addfeature", vectorSourceEvent => {
+  const polygonPoints = vectorSourceEvent.feature
+    .getGeometry()
+    .getCoordinates()[0];
+  for (let i = 0; i < polygonPoints.length; i++) {
+    // console.log(
+    //   ">>>>>>>point: " + toLonLat([polygonPoints[i][1], polygonPoints[i][0]])
+    // );
+    const coord = toLonLat([polygonPoints[i][1], polygonPoints[i][0]]);
+    addNewPolygonPoint(coord[0], coord[1]);
+  }
+});
