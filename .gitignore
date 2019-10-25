@@ -3,3 +3,4 @@
 .settings/
 firebase/public
 node_modules/
+dist/

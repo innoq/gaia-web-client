@@ -24,26 +24,18 @@
         <a class="navbar-brand" href="#">GAIA - Feld erfassen</a>
       </nav>
 
-      <div id="map" class="row map mb-2">
-      </div>
-      
-      <div class="row justify-content-end mb-2">
-        <button id="addCoord" class="col-3 btn btn-primary">Add current location</button>
-      </div>
-      
-      <div class="row">
-        <ul class="point-list"> 
-        </ul>
-      </div>
+      <div id="map" class="row map mb-2"></div>
+
       <div class="row">
         <select id="crop-selection">
-          <option value="potato" label="potato"> 
-          <option value="corn" label="corn"> 
+          <option value="potato">potato</option>
+          <option value="corn">corn</option>
         </select>
       </div>
       <div class="row justify-content-end mb-2">
         <button id="postField" class="col-3 btn btn-primary">Save Area</button>
       </div>
+      <div class="confirmation"></div>
     </div>
 
     <script type="module" src="./index.js"></script>

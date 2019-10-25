@@ -3,10 +3,9 @@ import { toLonLat } from "ol/proj";
 
 import Polygon from "./models/Polygon";
 
-
 import Feature from "ol/Feature";
 import Geolocation from "ol/Geolocation";
-import GeoJSON from 'ol/format/GeoJSON';
+import GeoJSON from "ol/format/GeoJSON";
 import Map from "ol/Map";
 import Point from "ol/geom/Point";
 import View from "ol/View";
@@ -74,12 +73,12 @@ var view = new View({
 });
 
 var geolocation = new Geolocation({
-    // enableHighAccuracy must be set to true to have the heading value.
-    trackingOptions: {
-      enableHighAccuracy: true
-    },
-    projection: view.getProjection(),
-    tracking: true,
+  // enableHighAccuracy must be set to true to have the heading value.
+  trackingOptions: {
+    enableHighAccuracy: true
+  },
+  projection: view.getProjection(),
+  tracking: true
 });
 
 var map = new Map({
@@ -101,59 +100,34 @@ map.addInteraction(modify);
 map.addInteraction(draw);
 map.addInteraction(snap);
 
-
-
 geolocation.on("change:position", evt => {
-	accuracyFeature.setGeometry(geolocation.getAccuracyGeometry());
+  accuracyFeature.setGeometry(geolocation.getAccuracyGeometry());
 });
 
-geolocation.on('change:accuracyGeometry', evt => {
-	const currentPosition = geolocation.getPosition();
-	const currentPositionLonLat = toLonLat([
-		currentPosition[0],
-		currentPosition[1]
-		]);
-	console.log("new current position: " + currentPositionLonLat);
-	
-	//this.accuracyFeature.setGeometry(this.geolocation.getAccuracyGeometry());
-	const coordinates = geolocation.getPosition();
-	positionFeature.setGeometry(new Point(coordinates));
-	map
-	.getView()
-	.animate({ center: coordinates, zoom: 16, duration: 100 });
-});
-
-new VectorLayer({
-	map: map,
-	source: new VectorSource({
-	  features: [accuracyFeature, positionFeature]
-    })
-});
-
-
-
-const button = document.querySelector("#addCoord");
-
-button.addEventListener("click", e => {
+geolocation.on("change:accuracyGeometry", evt => {
   const currentPosition = geolocation.getPosition();
   const currentPositionLonLat = toLonLat([
     currentPosition[0],
     currentPosition[1]
   ]);
-  const point = new Point(currentPositionLonLat[0], currentPositionLonLat[1]);
-  points.push(point);
-  renderPointList();
+  console.log("new current position: " + currentPositionLonLat);
+
+  //this.accuracyFeature.setGeometry(this.geolocation.getAccuracyGeometry());
+  const coordinates = geolocation.getPosition();
+  positionFeature.setGeometry(new Point(coordinates));
+  map.getView().animate({ center: coordinates, zoom: 16, duration: 100 });
 });
 
-const renderPointList = function() {
-  const pointList = document.querySelector(".point-list");
-  pointList.innerHTML = "";
-  console.log({ points });
-  points.forEach(p => {
-    const li = document.createElement("li");
-    li.innerHTML = `lon: ${p.longitude} lat: ${p.latitude}`;
-    pointList.appendChild(li);
-  });
+new VectorLayer({
+  map: map,
+  source: new VectorSource({
+    features: [accuracyFeature, positionFeature]
+  })
+});
+
+const confirmationMessage = function(selectedCrop) {
+  const confirmationMessage = document.querySelector(".confirmation");
+  confirmationMessage.innerHTML = `${selectedCrop} field data has been sent to server`;
 };
 
 let polygonFeature;
@@ -162,21 +136,19 @@ source.on("addfeature", vectorSourceEvent => {
   const polygon = new Polygon(vectorSourceEvent.feature);
   polygonFeature = vectorSourceEvent.feature;
   points = points.concat(polygon.points);
-  renderPointList();
 });
-
 
 const getSelectedCrop = function() {
   const crop = document.querySelector("#crop-selection");
   return crop.value;
-}
+};
 
-const postNewArea = function () {
-  console.log({polygonFeature});
+const postNewArea = function() {
+  console.log({ polygonFeature });
   if (polygonFeature) {
     // const crop = getSelectedCrop();
 
-    polygonFeature.set('cropName', getSelectedCrop());
+    polygonFeature.set("cropName", getSelectedCrop());
     console.log("polygonFeature", polygonFeature);
     const geometry = polygonFeature.getGeometry();
     console.log("geometry", geometry);
@@ -184,10 +156,11 @@ const postNewArea = function () {
     const json = geoJSON.writeFeature(polygonFeature);
 
     console.log(json);
+    confirmationMessage(getSelectedCrop());
   }
-}
+};
 
-const postButton = document.querySelector('#postField');
-postButton.addEventListener('click', e => {
+const postButton = document.querySelector("#postField");
+postButton.addEventListener("click", e => {
   postNewArea();
 });
