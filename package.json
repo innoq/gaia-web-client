@@ -23,7 +23,9 @@
   "author": "innoq.com",
   "license": "ISC",
   "dependencies": {
-    "ol": "^6.0.1"
+    "firebase": "^7.2.2",
+    "ol": "^6.0.1",
+    "uuid": "^3.3.3"
   },
   "devDependencies": {
     "bootstrap": "^4.3.1",

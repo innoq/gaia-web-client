@@ -14,6 +14,24 @@ import { Tile as TileLayer, Vector as VectorLayer } from "ol/layer";
 import { XYZ, Vector as VectorSource } from "ol/source";
 import { Circle as CircleStyle, Fill, Stroke, Style } from "ol/style";
 
+import * as firebase from "firebase/app";
+import "firebase/auth";
+import "firebase/database";
+
+const uuidv1 = require('uuid/v1');
+
+const firebaseConfig = {
+  apiKey: "AIzaSyCELnZecj1XpxCdaW7-wOLy5GDapL0-ETg",
+  authDomain: "gaia-ce696.firebaseapp.com",
+  databaseURL: "https://gaia-ce696.firebaseio.com",
+  projectId: "gaia-ce696",
+  storageBucket: "gaia-ce696.appspot.com",
+  messagingSenderId: "808239744138",
+  appId: "1:808239744138:web:6d7f680d4e537f87b31973"
+};
+
+firebase.initializeApp(firebaseConfig);
+
 let points = [];
 
 var accuracyFeature = new Feature();
@@ -156,6 +174,11 @@ const postNewArea = function() {
     const json = geoJSON.writeFeature(polygonFeature);
 
     console.log(json);
+
+    const uuid = uuidv1();
+    console.log(`uuid: ${uuid}`);
+    firebase.database().ref(`fields/${uuid}`).set(json);
+
     confirmationMessage(getSelectedCrop());
   }
 };
