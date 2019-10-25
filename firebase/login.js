@@ -2,13 +2,12 @@ document.addEventListener('DOMContentLoaded', function () {
     try {
         const app = firebase.app();
 
-        var actionCodeSettings = {
+        const actionCodeSettings = {
             // URL you want to redirect back to. The domain (www.example.com) for this
             // URL must be whitelisted in the Firebase Console.
-            url: 'https://gaia-ce696.web.app/callback.html',
+            url: 'https://gaia-ce696.firebaseapp.com/callback.html',
             // This must be true.
             handleCodeInApp: true,
-            dynamicLinkDomain: 'gaia-ce696.web.app'
         };
 
         firebase.auth().sendSignInLinkToEmail("daniel@bornkessel.com", actionCodeSettings)
@@ -19,13 +18,11 @@ document.addEventListener('DOMContentLoaded', function () {
                 window.localStorage.setItem('emailForSignIn', email);
             })
             .catch(function (error) {
-                // Some error occurred, you can inspect the code: error.code
+                console.error("error sending email link", error);
             });
 
 
     } catch (e) {
         console.error(e);
-        document.getElementById('load').innerHTML = 'Error loading the Firebase SDK, check the console.';
-
     }
 });
