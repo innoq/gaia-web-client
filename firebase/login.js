@@ -21,7 +21,7 @@ document.addEventListener('DOMContentLoaded', function () {
               // Additional state showPromo=1234 can be retrieved from URL on
               // sign-in completion in signInSuccess callback by checking
               // window.location.href.
-              url: 'https://gaia-ce696.firebaseapp.com/callback.html',
+              url: 'https://gaiaapp.xyz/callback.html',
               // Custom FDL domain.
               // Always true for email link sign-in.
               handleCodeInApp: true,
