@@ -14,6 +14,7 @@
   <!-- include only the Firebase features as you need -->
   <script defer src="/__/firebase/7.2.1/firebase-auth.js"></script>
   <script defer src="/__/firebase/7.2.1/firebase-database.js"></script>
+  <script defer src="/__/firebase/7.2.1/firebase-messaging.js"></script>
   <script defer src="/__/firebase/7.2.1/firebase-storage.js"></script>
   <!-- initialize the SDK after all desired features are loaded -->
   <script defer src="/__/firebase/init.js"></script>
@@ -21,79 +22,8 @@
 </head>
 
 <body>
-  <div id="message">
-    <h2>Welcome Gaia</h2>
-  </div>
-  <div id="firebaseui-auth-container"></div>
-
-  <script>
-    document.addEventListener('DOMContentLoaded', function () {
-      // // 🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥
-      // // The Firebase SDK is initialized and available here!
-      //
-      // firebase.auth().onAuthStateChanged(user => { });
-      // firebase.database().ref('/path/to/ref').on('value', snapshot => { });
-      // firebase.messaging().requestPermission().then(() => { });
-      // firebase.storage().ref('/path/to/ref').getDownloadURL().then(() => { });
-      //
-      // // 🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥
-
-      try {
-        const app = firebase.app();
-        const features = ['auth', 'firestore', 'database', 'messaging', 'storage'].filter(feature => typeof app[feature] === 'function');
-        document.getElementById('load').innerHTML = `Firebase SDK loaded with ${features.join(', ')}`;
-        console.info("successfully written Data");
-        var email = window.localStorage.setItem('emailforsignin', "foobar@bornkessel.com");
-
-        function writeUserData(userId, name, email, imageUrl) {
-          firebase.database().ref('users/' + userId).set({
-            username: name,
-            email: email,
-            profile_picture: imageUrl
-          });
-
-        }
-
-        // Confirm the link is a sign-in with email link.
-        if (firebase.auth().isSignInWithEmailLink(window.location.href)) {
-          // Additional state parameters can also be passed via URL.
-          // This can be used to continue the user's intended action before triggering
-          // the sign-in operation.
-          // Get the email if available. This should be available if the user completes
-          // the flow on the same device where they started it.
-          var email = window.localStorage.getItem('emailforsignin');
-          if (!email) {
-            // User opened the link on a different device. To prevent session fixation
-            // attacks, ask the user to provide the associated email again. For example:
-            email = window.prompt('Please provide your email for confirmation');
-          }
-          // The client SDK will parse the code from the link for you.
-          firebase.auth().signInWithEmailLink(email, window.location.href)
-            .then(function (result) {
-              // Clear email from storage.
-              window.localStorage.removeItem('emailForSignIn');
-              console.log("WOOHOO", result);
-              writeUserData(result.user.uid, "Daniel Bornkessel", "foo@bornkessel.com", "https://pbs.twimg.com/profile_images/972145726095593472/jnRW3wxL_400x400.jpg");
-              writeUserData("foobar", "Daniel Bornkessel", "foo@bornkessel.com", "https://pbs.twimg.com/profile_images/972145726095593472/jnRW3wxL_400x400.jpg");
-              // You can access the new user via result.user
-              // Additional user info profile not available via:
-              // result.additionalUserInfo.profile == null
-              // You can check if the user is new or existing:
-              // result.additionalUserInfo.isNewUser
-            })
-            .catch(function (error) {
-              // Some error occurred, you can inspect the code: error.code
-              // Common errors could be invalid email and invalid or expired OTPs.
-            });
-        }
-
-      } catch (e) {
-        console.error(e);
-        document.getElementById('load').innerHTML = 'Error loading the Firebase SDK, check the console.';
-
-      }
-    });
-  </script>
+  <center><h1>verifying ...</h1></center>
+  <script src="callback.js"></script>
 </body>
 
 </html>
