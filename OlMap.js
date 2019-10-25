@@ -39,9 +39,7 @@ export default class OlMap {
         maxZoom: 23
       })
     });
-    this.source = new VectorSource({
-      features: [this.positionFeature, this.accuracyFeature]
-    });
+    this.source = new VectorSource();
 
     this.vector = new VectorLayer({
       source: this.source,
@@ -66,6 +64,15 @@ export default class OlMap {
       center: [-11000000, 4600000],
       zoom: 4
     });
+    
+    this.geolocation = new Geolocation({
+        // enableHighAccuracy must be set to true to have the heading value.
+        trackingOptions: {
+          enableHighAccuracy: true
+        },
+        projection: this.view.getProjection(),
+        tracking: true,
+    });
 
     this.map = new Map({
       layers: [this.raster, this.vector],
@@ -85,15 +92,21 @@ export default class OlMap {
     this.map.addInteraction(this.draw);
     this.map.addInteraction(this.snap);
 
-    this.geolocation = new Geolocation({
-      // enableHighAccuracy must be set to true to have the heading value.
-      trackingOptions: {
-        enableHighAccuracy: true
-      },
-      projection: this.view.getProjection()
-    });
-    this.geolocation.setTracking(true);
+    
+
     this.geolocation.on("change:position", this.onChangeGeolocation);
+    this.geolocation.on('change:accuracyGeometry', this.onChangeAccuracyGeometry);
+    
+    new VectorLayer({
+    	map: this.map,
+    	source: new VectorSource({
+    	  features: [this.accuracyFeature, this.positionFeature]
+        })
+    });
+  }
+  
+  onChangeAccuracyGeometry() {
+	  this.accuracyFeature.setGeometry(this.geolocation.getAccuracyGeometry());
   }
 
   onChangeGeolocation() {
@@ -107,7 +120,7 @@ export default class OlMap {
     ]);
     console.log("new current position: " + currentPositionLonLat);
 
-    this.accuracyFeature.setGeometry(this.geolocation.getAccuracyGeometry());
+    //this.accuracyFeature.setGeometry(this.geolocation.getAccuracyGeometry());
     const coordinates = this.geolocation.getPosition();
     this.positionFeature.setGeometry(new Point(coordinates));
     this.map

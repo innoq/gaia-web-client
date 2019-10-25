@@ -35,6 +35,7 @@ const renderPointList = function() {
 };
 
 olMap.source.on("addfeature", vectorSourceEvent => {
+  olMap.map.removeInteraction(olMap.draw);
   const polygon = new Polygon(vectorSourceEvent.feature);
   points = points.concat(polygon.points);
   renderPointList();
