@@ -6,6 +6,7 @@ import Polygon from "./models/Polygon";
 
 import Feature from "ol/Feature";
 import Geolocation from "ol/Geolocation";
+import GeoJSON from 'ol/format/GeoJSON';
 import Map from "ol/Map";
 import Point from "ol/geom/Point";
 import View from "ol/View";
@@ -155,9 +156,38 @@ const renderPointList = function() {
   });
 };
 
+let polygonFeature;
 source.on("addfeature", vectorSourceEvent => {
   map.removeInteraction(draw);
   const polygon = new Polygon(vectorSourceEvent.feature);
+  polygonFeature = vectorSourceEvent.feature;
   points = points.concat(polygon.points);
   renderPointList();
+});
+
+
+const getSelectedCrop = function() {
+  const crop = document.querySelector("#crop-selection");
+  return crop.value;
+}
+
+const postNewArea = function () {
+  console.log({polygonFeature});
+  if (polygonFeature) {
+    // const crop = getSelectedCrop();
+
+    polygonFeature.set('cropName', getSelectedCrop());
+    console.log("polygonFeature", polygonFeature);
+    const geometry = polygonFeature.getGeometry();
+    console.log("geometry", geometry);
+    const geoJSON = new GeoJSON();
+    const json = geoJSON.writeFeature(polygonFeature);
+
+    console.log(json);
+  }
+}
+
+const postButton = document.querySelector('#postField');
+postButton.addEventListener('click', e => {
+  postNewArea();
 });
