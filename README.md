@@ -9,4 +9,4 @@ Dazu muss in Google-Account vorhanden sein und zum Projekt hinzugefügt werden
 
 ## Deployment
 
-    npm deploy
+    npm run-script deploy
