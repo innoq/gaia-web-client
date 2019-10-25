@@ -41,11 +41,16 @@ const sendNewAreaToServer = function() {
 
     console.log(json);
 
-    const uuid = uuidv1();
-    console.log(`uuid: ${uuid}`);
-    firebase.database().ref(`fields/${uuid}`).set(json);
+    const user = JSON.parse(localStorage.getItem("user"));
+    if (user) {
+      const fieldId = uuidv1();
+      console.log(`uuid: ${fieldId}`);
+      firebase.database().ref(`users/${user.uid}/fields/${fieldId}`).set(json);
+      confirmationMessage(getSelectedCrop());
+    } else {
+      console.error("no user");
+    }
 
-    confirmationMessage(getSelectedCrop());
   }
 };
 

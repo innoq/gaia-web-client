@@ -1,31 +1,41 @@
 document.addEventListener('DOMContentLoaded', function () {
-    try {
-        const app = firebase.app();
+    window.localStorage.removeItem('emailforsignin');
+    const ui = new firebaseui.auth.AuthUI(firebase.auth());
+    ui.start('#firebaseui-auth-container', {
+      signInOptions: [
+        {
+          provider: firebase.auth.EmailAuthProvider.PROVIDER_ID,
+          // Use email link authentication and do not require password.
+          // Note this setting affects new users only.
+          // For pre-existing users, they will still be prompted to provide their
+          // passwords on sign-in.
+          signInMethod: firebase.auth.EmailAuthProvider.EMAIL_LINK_SIGN_IN_METHOD,
+          // Allow the user the ability to complete sign-in cross device, including
+          // the mobile apps specified in the ActionCodeSettings object below.
+          forceSameDevice: false,
+          // Used to define the optional firebase.auth.ActionCodeSettings if
+          // additional state needs to be passed along request and whether to open
+          // the link in a mobile app if it is installed.
+          emailLinkSignIn: function () {
+            return {
+              // Additional state showPromo=1234 can be retrieved from URL on
+              // sign-in completion in signInSuccess callback by checking
+              // window.location.href.
+              url: 'https://gaiaapp.xyz/callback.html',
+              // Custom FDL domain.
+              // Always true for email link sign-in.
+              handleCodeInApp: true,
+            };
+          }
+        }
+      ]
+    });
 
-        var actionCodeSettings = {
-            // URL you want to redirect back to. The domain (www.example.com) for this
-            // URL must be whitelisted in the Firebase Console.
-            url: 'https://gaia-ce696.web.app/callback.html',
-            // This must be true.
-            handleCodeInApp: true,
-            dynamicLinkDomain: 'gaia-ce696.web.app'
-        };
+    setTimeout(function(){
 
-        firebase.auth().sendSignInLinkToEmail("daniel@bornkessel.com", actionCodeSettings)
-            .then(function () {
-                // The link was successfully sent. Inform the user.
-                // Save the email locally so you don't need to ask the user for it again
-                // if they open the link on the same device.
-                window.localStorage.setItem('emailForSignIn', email);
-            })
-            .catch(function (error) {
-                // Some error occurred, you can inspect the code: error.code
-            });
+    document.forms[0].addEventListener("submit", function (e) {
+        debugger;
+    });
+    }, 3000)
 
-
-    } catch (e) {
-        console.error(e);
-        document.getElementById('load').innerHTML = 'Error loading the Firebase SDK, check the console.';
-
-    }
 });
